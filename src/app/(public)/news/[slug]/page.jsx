@@ -323,6 +323,16 @@ export default function NewsDetailPage() {
   const [imgIndex, setImgIndex] = useState(0);
   const [previewImage, setPreviewImage] = useState(null);
   const [liked, setLiked] = useState(false);
+
+  const handleLike = async () => {
+    const newLiked = !liked;
+    setLiked(newLiked);
+    try {
+      await api.patch(`/news/${news?._id}/like`, { action: newLiked ? 'like' : 'unlike' });
+    } catch (err) {
+      console.error('Failed to like news:', err);
+    }
+  };
   const [email, setEmail] = useState("");
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -812,7 +822,7 @@ export default function NewsDetailPage() {
               }}
             >
               <button
-                onClick={() => setLiked(!liked)}
+                onClick={handleLike}
                 style={{
                   display: "flex",
                   alignItems: "center",

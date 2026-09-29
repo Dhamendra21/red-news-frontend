@@ -50,9 +50,9 @@ export default function AdminAnalytics() {
     try {
       const days = dateFilter === 'today' ? 1 : dateFilter === 'week' ? 7 : dateFilter === 'month' ? 30 : 14;
       const [s, v, t] = await Promise.all([
-        api.get('/admin/stats'),
+        api.get(`/admin/stats?days=${days}`),
         api.get(`/admin/analytics/views-chart?days=${days}`),
-        api.get('/admin/analytics/top-news?sort=views&limit=5'),
+        api.get(`/admin/analytics/top-news?sort=views&limit=5&days=${days}`),
       ]);
       setStats(s.data.data);
       setViewsChart(v.data.data || []);

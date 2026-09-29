@@ -62,7 +62,7 @@ export default function Footer() {
           <div>
             {/* Logo */}
             <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-              <img src="/logo.webp" alt="RED NEWS BHARAT" style={{ height: 45, objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
+              <img src="/logo.webp" alt="RED NEWS BHARAT" style={{ height: 55, objectFit: 'contain ',  }} />
             </Link>
 
             <p style={{ color: '#64748B', fontSize: 13, lineHeight: 1.8, marginBottom: 20 }}>

@@ -16,8 +16,9 @@ export async function generateMetadata({ params }) {
     if (!article || !article.title) return {};
 
     const articleUrl = `${baseUrl}/news/${article.slug || params.slug}`;
-    const ogImage = article.image 
-        ? (article.image.startsWith('http') ? article.image : `${baseUrl}${article.image}`)
+    const firstImage = (article.images && article.images.length > 0) ? article.images[0].url : null;
+    const ogImage = firstImage 
+        ? (firstImage.startsWith('http') ? firstImage : `${baseUrl}${firstImage}`)
         : `${baseUrl}/images/og-default.jpg`;
         
     const rawExcerpt = article.summary || article.content || '';
@@ -79,7 +80,7 @@ export default async function NewsArticleLayout({ children, params }) {
     title: article.title,
     slug: article.slug || params.slug,
     excerpt: article.summary || article.content,
-    coverImage: article.image,
+    coverImage: (article.images && article.images.length > 0) ? article.images[0].url : null,
     publishedAt: article.createdAt || article.publishedAt || new Date().toISOString(),
     updatedAt: article.updatedAt || new Date().toISOString(),
     category: article.category?.name || article.category || 'News',

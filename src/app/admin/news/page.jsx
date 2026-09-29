@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import api from "@/services/api";
 import toast from 'react-hot-toast';
 import dayjs from 'dayjs';
-import { Newspaper, Flame, Edit, Trash2, Eye, AlertCircle, Image as ImageIcon, PlusCircle } from 'lucide-react';
+import { Newspaper, Flame, Edit, Trash2, Eye, AlertCircle, Image as ImageIcon, PlusCircle, Search } from 'lucide-react';
 
 function AdminNewsContent() {
   const [news, setNews] = useState([]);
@@ -14,10 +14,19 @@ function AdminNewsContent() {
   const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
   const statusFilter = searchParams.get('status') || '';
+  
+  const [searchInput, setSearchInput] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    api.get('/categories').then(({ data }) => setCategories(data.data || [])).catch(() => {});
+  }, []);
 
   const fetchNews = () => {
     setIsLoading(true);
-    api.get('/news', { params: { page, limit: 20, status: statusFilter || undefined } })
+    api.get('/news', { params: { page, limit: 20, status: statusFilter || undefined, search: searchTerm || undefined, category: categoryFilter || undefined } })
       .then(({ data }) => { setNews(data.data); setTotal(data.total); })
       .catch(() => toast.error('समाचार लोड नहीं हो सका'))
       .finally(() => setIsLoading(false));
@@ -25,7 +34,13 @@ function AdminNewsContent() {
 
   useEffect(() => {
     fetchNews();
-  }, [page, statusFilter]);
+  }, [page, statusFilter, searchTerm, categoryFilter]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearchTerm(searchInput);
+    setPage(1);
+  };
 
   const handleDelete = async (id) => {
     if (!window.confirm('क्या आप इस समाचार को हटाना चाहते हैं?')) return;
@@ -52,6 +67,44 @@ function AdminNewsContent() {
         <Link href="/admin/news/create" className="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm flex items-center gap-2 transition-colors">
           <PlusCircle size={18} /> नई खबर
         </Link>
+      </div>
+
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <Link href="/admin/news?status=published" className={`px-4 py-2 rounded-full font-medium text-sm transition-colors ${(!statusFilter || statusFilter === 'published') ? 'bg-red-600 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+            प्रकाशित (Published)
+          </Link>
+          <Link href="/admin/news?status=draft" className={`px-4 py-2 rounded-full font-medium text-sm transition-colors ${statusFilter === 'draft' ? 'bg-amber-500 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+            ड्राफ्ट (Drafts)
+          </Link>
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          <form onSubmit={handleSearch} className="relative w-full sm:w-auto">
+            <input 
+              type="text" 
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="शीर्षक खोजें..." 
+              className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-red-500 w-full sm:w-64"
+            />
+            <Search className="absolute left-3 top-2.5 text-slate-400" size={16} />
+          </form>
+
+          <select 
+            value={categoryFilter}
+            onChange={(e) => {
+              setCategoryFilter(e.target.value);
+              setPage(1);
+            }}
+            className="px-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-red-500 bg-white text-slate-700 w-full sm:w-auto"
+          >
+            <option value="">सभी वर्ग (All Categories)</option>
+            {categories.map(cat => (
+              <option key={cat._id} value={cat.slug || cat.name}>{cat.name}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">

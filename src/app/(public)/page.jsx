@@ -55,6 +55,10 @@ export default function HomePage() {
       {/* Web Stories Strip */}
       <WebStoriesStrip />
 
+      <div className="mb-6">
+        <AdUnit position="home-top" />
+      </div>
+
       {news.length === 0 && isLoading ? (
         /* ── Loading Skeleton ── */
         <div className="flex flex-col items-center justify-center py-24 gap-4">
