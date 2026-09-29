@@ -19,14 +19,19 @@ export default function AdminAds() {
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null); // For display in form
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // Form loading
+  const [isFetching, setIsFetching] = useState(true); // Initial data loading
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [cropImageSrc, setCropImageSrc] = useState(null);
 
   useEffect(() => { fetchAds(); }, []);
 
   const fetchAds = () => {
-    api.get('/ads').then(({ data }) => setAds(data.data)).catch(() => {});
+    setIsFetching(true);
+    api.get('/ads')
+      .then(({ data }) => setAds(data.data))
+      .catch(() => {})
+      .finally(() => setIsFetching(false));
   };
 
   const handleSubmit = async (e) => {
@@ -84,13 +89,8 @@ export default function AdminAds() {
     fetchAds();
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-4 border-green-600 border-t-transparent"></div>
-      </div>
-    );
-  }
+  // Form is loading, overlay spinner could be here but we let the form button show loading instead.
+  // if (isLoading) ... (removed to not block entire page during form submit)
 
   return (
     <div>
@@ -150,19 +150,30 @@ export default function AdminAds() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {ads.map(ad => (
-          <div key={ad._id} className="bg-white rounded-xl p-4 shadow-sm">
-            {ad.imageUrl && <img src={ad.imageUrl} alt={ad.title} className="w-full h-24 object-cover rounded-lg mb-3" />}
-            <h3 className="font-bold text-gray-800 text-sm">{ad.title}</h3>
-            <p className="text-xs text-gray-500 flex items-center gap-1 mt-1"><MapPin size={12} /> {ad.position}</p>
-            <div className="flex items-center justify-between mt-3 text-xs text-gray-400">
-              <span className="flex items-center gap-2"><span className="flex items-center gap-1"><Eye size={12} /> {ad.impressions}</span> <span>&bull;</span> <span className="flex items-center gap-1"><MousePointer2 size={12} /> {ad.clicks}</span></span>
-              <button onClick={() => handleDelete(ad._id)} className="text-red-500 hover:text-red-700 flex items-center gap-1"><Trash2 size={12} /> हटाएं</button>
+      {isFetching ? (
+        <div className="flex justify-center items-center py-20">
+          <div className="animate-spin rounded-full h-10 w-10 border-4 border-green-600 border-t-transparent"></div>
+        </div>
+      ) : ads.length === 0 ? (
+        <div className="text-center py-20 bg-white rounded-xl shadow-sm border border-gray-100 mt-2">
+          <p className="text-gray-500 font-medium">कोई विज्ञापन नहीं मिला</p>
+          <p className="text-sm text-gray-400 mt-1">कृपया नया विज्ञापन जोड़ने के लिए ऊपर दिए गए बटन पर क्लिक करें।</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {ads.map(ad => (
+            <div key={ad._id} className="bg-white rounded-xl p-4 shadow-sm">
+              {ad.imageUrl && <img src={ad.imageUrl} alt={ad.title} className="w-full h-24 object-cover rounded-lg mb-3" />}
+              <h3 className="font-bold text-gray-800 text-sm">{ad.title}</h3>
+              <p className="text-xs text-gray-500 flex items-center gap-1 mt-1"><MapPin size={12} /> {ad.position}</p>
+              <div className="flex items-center justify-between mt-3 text-xs text-gray-400">
+                <span className="flex items-center gap-2"><span className="flex items-center gap-1"><Eye size={12} /> {ad.impressions}</span> <span>&bull;</span> <span className="flex items-center gap-1"><MousePointer2 size={12} /> {ad.clicks}</span></span>
+                <button onClick={() => handleDelete(ad._id)} className="text-red-500 hover:text-red-700 flex items-center gap-1"><Trash2 size={12} /> हटाएं</button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       <ImageCropperModal
         isOpen={cropModalOpen}

@@ -4,13 +4,14 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from "@/store/slice/authSlice";
-import { LayoutDashboard, BarChart3, Newspaper, SquarePen, Inbox, Megaphone, Users, User, LogOut, ChevronLeft, ChevronRight, Link as LinkIcon, FolderTree, Film } from 'lucide-react';
+import { LayoutDashboard, BarChart3, Newspaper, SquarePen, Inbox, Megaphone, Users, User, LogOut, ChevronLeft, ChevronRight, Link as LinkIcon, FolderTree, Film, Image as ImageIcon } from 'lucide-react';
 
 const NAV_ITEMS = [
   { path: '/admin', label: 'Dashboard', icon: <LayoutDashboard size={20} />, exact: true },
   { path: '/admin/analytics', label: 'Analytics', icon: <BarChart3 size={20} />, badge: 'नया' },
   { path: '/admin/news', label: 'News', icon: <Newspaper size={20} /> },
   { path: '/admin/news/create', label: 'Create News', icon: <SquarePen size={20} /> },
+  { path: '/admin/gallery', label: 'Media Gallery', icon: <ImageIcon size={20} /> },
   { path: '/admin/comments', label: 'Comments', icon: <Inbox size={20} /> },
   { path: '/admin/ads', label: 'Ads', icon: <Megaphone size={20} /> },
   { path: '/admin/reader-submissions', label: 'Submissions', icon: <FolderTree size={20} /> },
