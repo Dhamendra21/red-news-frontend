@@ -495,6 +495,13 @@ export default function NewsDetailPage() {
               {news.title}
             </h1>
 
+            {/* Summary */}
+            {news.summary && (
+              <h2 className="text-lg sm:text-xl font-medium text-slate-600 mb-6 leading-relaxed">
+                {news.summary}
+              </h2>
+            )}
+
             {/* Author + Meta */}
             <div
               style={{
@@ -736,7 +743,7 @@ export default function NewsDetailPage() {
             {/* Content — AI bold fix */}
             {/* Content */}
             <div
-              className="font-body text-slate-800 text-base sm:text-lg leading-relaxed sm:leading-loose"
+              className="font-body text-slate-800 text-lg sm:text-xl leading-loose tracking-wide"
               dangerouslySetInnerHTML={{
                 __html: `<p style="margin-bottom:16px">${formatAIContent(displayContent)}</p>`,
               }}

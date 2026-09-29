@@ -9,6 +9,7 @@ import WebStoriesStrip from "@/components/home/WebStoriesStrip";
 import InteractiveDailyPoll from "@/components/home/InteractiveDailyPoll";
 import AdUnit from "@/components/common/AdUnit";
 import { useInView } from 'react-intersection-observer';
+import toast from 'react-hot-toast';
 
 /* ── Category quick-access data ── */
 const QUICK_CATEGORIES = [
@@ -121,7 +122,19 @@ export default function HomePage() {
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> 
                             1.4k पढ़ रहे हैं
                           </span>
-                          <button onClick={(e) => { e.preventDefault(); }} className="bg-white/10 p-1.5 rounded-full hover:bg-white/20 transition-colors">
+                          <button onClick={async (e) => { 
+                            e.preventDefault(); 
+                            const url = `${window.location.origin}/news/${featuredNews.slug || featuredNews._id}`;
+                            const title = featuredNews.title;
+                            if (navigator.share) {
+                              try { await navigator.share({ title, url }); } catch(err){}
+                            } else {
+                              try { 
+                                await navigator.clipboard.writeText(`${title}\n${url}`); 
+                                toast.success("लिंक कॉपी हो गया!"); 
+                              } catch(err) { toast.error("कॉपी विफल"); }
+                            }
+                          }} className="bg-white/10 p-1.5 rounded-full hover:bg-white/20 transition-colors">
                             <Share2 className="w-4 h-4 text-white" />
                           </button>
                         </div>
