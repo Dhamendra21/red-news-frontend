@@ -64,18 +64,42 @@ export default function AdminNewsForm() {
   const handleImageUpload = async (files) => {
     if (images.length + files.length > 10) return toast.error('अधिकतम 10 चित्र अपलोड कर सकते हैं');
     setUploadingImages(true);
-    const formData = new FormData();
-    Array.from(files).forEach(file => formData.append('images', file));
+    
     try {
-      const { data } = await api.post('/news/upload-images', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      const newImages = data.data.map((img, i) => ({
-        ...img, caption: '', isMain: images.length === 0 && i === 0
-      }));
+      const newImages = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        // Convert to Base64
+        const base64Data = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = error => reject(error);
+        });
+
+        // Upload as JSON payload
+        const { data } = await api.post('/news/upload-images', {
+          imageBase64: base64Data,
+          originalName: file.name
+        }, {
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (data && data.success) {
+          newImages.push({
+            url: data.url,
+            name: file.name || data.url.split('/').pop(),
+            caption: '',
+            isMain: images.length === 0 && newImages.length === 0
+          });
+        }
+      }
+
       setImages(prev => [...prev, ...newImages]);
-      toast.success(`${data.data.length} चित्र अपलोड हुए`);
+      toast.success(`${newImages.length} चित्र अपलोड हुए`);
     } catch (err) {
+      console.error('Upload Error:', err);
       toast.error('चित्र अपलोड विफल');
     } finally {
       setUploadingImages(false);
