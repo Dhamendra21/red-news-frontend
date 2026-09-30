@@ -124,30 +124,43 @@ export default function BillingPage() {
     setShowHistory(false);
   };
 
-  const handleSaveAndPrint = async () => {
+  const handleSave = async () => {
     if (!invoice.client.name || invoice.items.some(i => !i.description)) {
       toast.error('Please fill client name and all item descriptions');
-      return;
+      return false;
     }
 
     try {
-      // Only save if it's a new invoice (we don't want to duplicate if they just clicked download again)
-      // Check if it already has an _id (meaning it was loaded from history)
       if (!invoice._id) {
         toast.loading('Saving invoice...', { id: 'save' });
-        await api.post('/invoices', invoice);
+        const res = await api.post('/invoices', invoice);
+        
+        // Update local state to reflect it is now saved
+        setInvoice(prev => ({ ...prev, _id: res.data.data._id }));
+        
         toast.success('Invoice saved!', { id: 'save' });
         fetchPreviousInvoices();
-        fetchNextNum(); // prepare next number for next time
+        fetchNextNum();
+      } else {
+        toast.success('Invoice is already saved!', { id: 'save' });
       }
-      
-      // Trigger browser print
+      return true;
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to save', { id: 'save' });
+      return false;
+    }
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleSaveAndPrint = async () => {
+    const success = await handleSave();
+    if (success) {
       setTimeout(() => {
         window.print();
       }, 500);
-      
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to process', { id: 'save' });
     }
   };
 
@@ -166,6 +179,18 @@ export default function BillingPage() {
               className="px-3 py-2 border rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 flex items-center gap-1"
             >
               <Clock size={16} /> History
+            </button>
+            <button 
+              onClick={handleSave}
+              className="bg-gray-800 hover:bg-gray-900 text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-1 transition-colors"
+            >
+              <Save size={16} /> Save
+            </button>
+            <button 
+              onClick={handlePrint}
+              className="bg-gray-100 hover:bg-gray-200 border text-gray-700 px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-1 transition-colors"
+            >
+              <Download size={16} /> Print/Download
             </button>
             <button 
               onClick={handleSaveAndPrint}
