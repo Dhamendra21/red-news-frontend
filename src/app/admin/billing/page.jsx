@@ -325,9 +325,10 @@ export default function BillingPage() {
               <img src="/logo.webp" alt="RED NEWS BHARAT" className="h-16 mb-3 object-contain" />
               <p className="text-xs text-gray-500 font-medium">Digital Media & News Network</p>
               <div className="text-xs text-gray-500 mt-2 leading-relaxed">
-                <p>Raipur, Chhattisgarh, India</p>
-                <p>Email: contact@rednewsbharat.live</p>
+                <p>Priyadarshini Parisar Railway Undar Brige Supela Undar Brige Bhilai, Durg, Chhattisgarh 430029</p>
+                <p>Email:rednews1985.cg@gmail.com </p>
                 <p>Web: www.rednewsbharat.live</p>
+                <p>Phone: +91 92013 96145</p>
               </div>
             </div>
             <div className="text-right">
