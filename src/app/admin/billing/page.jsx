@@ -152,14 +152,43 @@ export default function BillingPage() {
   };
 
   const handlePrint = () => {
-    window.print();
+    const invoiceEl = document.getElementById('invoice-preview');
+    if (!invoiceEl) return;
+
+    const printWindow = window.open('', '_blank', 'width=900,height=1200');
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>Invoice ${invoice.invoiceNumber}</title>
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" />
+          <style>
+            body { margin: 0; padding: 0; background: white; font-family: sans-serif; }
+            @page { size: A4; margin: 0; }
+            @media print { body { margin: 0; } }
+          </style>
+        </head>
+        <body>
+          <div style="padding: 40px; max-width: 800px; margin: 0 auto;">
+            ${invoiceEl.innerHTML}
+          </div>
+          <script>
+            window.onload = function() {
+              setTimeout(function() { window.print(); window.close(); }, 500);
+            };
+          <\/script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
   };
 
   const handleSaveAndPrint = async () => {
     const success = await handleSave();
     if (success) {
       setTimeout(() => {
-        window.print();
+        handlePrint();
       }, 500);
     }
   };
