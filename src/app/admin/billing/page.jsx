@@ -165,10 +165,10 @@ export default function BillingPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto h-[calc(100vh-80px)] flex flex-col md:flex-row gap-6 print:block print:h-auto overflow-hidden print:overflow-visible pb-10 print:pb-0">
+    <div id="billing-root" className="max-w-7xl mx-auto h-[calc(100vh-80px)] flex flex-col md:flex-row gap-6 overflow-hidden pb-10">
       
       {/* LEFT PANEL: Controls (Hidden in Print) */}
-      <div className="w-full md:w-1/2 flex flex-col h-full bg-white rounded-xl shadow-sm border print:hidden overflow-hidden relative">
+      <div id="billing-controls" className="w-full md:w-1/2 flex flex-col h-full bg-white rounded-xl shadow-sm border overflow-hidden relative">
         
         {/* Header */}
         <div className="p-5 border-b bg-white flex justify-between items-center shrink-0">
@@ -316,8 +316,8 @@ export default function BillingPage() {
       </div>
 
       {/* RIGHT PANEL: A4 Printable Preview */}
-      <div className="w-full md:w-1/2 h-full overflow-y-auto bg-gray-100 flex justify-center py-4 print:py-0 print:bg-white print:overflow-visible print:w-full print:block">
-        <div ref={invoiceRef} className="bg-white shadow-lg print:shadow-none print:mx-0 w-full max-w-[800px] min-h-[1100px] p-12 relative flex flex-col">
+      <div className="w-full md:w-1/2 h-full overflow-y-auto bg-gray-100 flex justify-center py-4">
+        <div ref={invoiceRef} id="invoice-preview" className="bg-white shadow-lg w-full max-w-[800px] min-h-[1100px] p-12 relative flex flex-col">
           
           {/* Header */}
           <div className="flex justify-between items-end border-b-2 border-red-600 pb-6 mb-8">
@@ -452,27 +452,62 @@ export default function BillingPage() {
       {/* Global Print Styles */}
       <style jsx global>{`
         @media print {
-          html, body, #__next, .min-h-screen, main, .overflow-hidden, .overflow-auto {
-            height: auto !important;
-            min-height: auto !important;
-            overflow: visible !important;
-            display: block !important;
-          }
-          body * {
-            visibility: hidden;
-          }
-          .print\\:block, .print\\:block * {
-            visibility: visible;
-          }
-          .print\\:hidden {
+          /* 1. Hide absolutely everything */
+          body > * {
             display: none !important;
           }
-          .print\\:block {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
+
+          /* 2. Show only the Next.js root */
+          body > #__next {
+            display: block !important;
+          }
+
+          /* 3. Hide sidebar and header inside __next */
+          body > #__next aside,
+          body > #__next header,
+          body > #__next nav,
+          #billing-controls {
+            display: none !important;
+          }
+
+          /* 4. Make all wrapper containers non-constraining */
+          body, html, #__next, #__next > div, #__next > div > div {
+            display: block !important;
+            height: auto !important;
+            min-height: unset !important;
+            overflow: visible !important;
+            background: white !important;
+            margin: 0 !important;
+            padding: 0 !important;
             width: 100% !important;
           }
+
+          /* 5. Show billing root without constraints */
+          #billing-root {
+            display: block !important;
+            height: auto !important;
+            overflow: visible !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            max-width: 100% !important;
+          }
+
+          /* 6. Show the invoice preview full width */
+          #invoice-preview {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+            padding: 20mm !important;
+            min-height: unset !important;
+          }
+
+          #invoice-preview * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
           @page {
             size: A4;
             margin: 0;
