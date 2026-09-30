@@ -3,8 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import api from '@/services/api';
 import toast from 'react-hot-toast';
 import { Plus, Trash2, Printer, Save, FileText, Download, Clock, ChevronRight } from 'lucide-react';
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
 
 export default function BillingPage() {
   const [nextInvoiceNumber, setNextInvoiceNumber] = useState('');
@@ -126,29 +124,7 @@ export default function BillingPage() {
     setShowHistory(false);
   };
 
-  const generatePDF = async () => {
-    const element = invoiceRef.current;
-    if (!element) return;
-    
-    try {
-      // Create canvas from the invoice DOM element
-      const canvas = await html2canvas(element, { scale: 2, useCORS: true });
-      const imgData = canvas.toDataURL('image/png');
-      
-      // A4 size in mm
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`Invoice_${invoice.invoiceNumber}.pdf`);
-    } catch (error) {
-      console.error('PDF Generation Error:', error);
-      toast.error('PDF Error: ' + error.message);
-    }
-  };
-
-  const handleSaveAndDownload = async () => {
+  const handleSaveAndPrint = async () => {
     if (!invoice.client.name || invoice.items.some(i => !i.description)) {
       toast.error('Please fill client name and all item descriptions');
       return;
@@ -165,10 +141,10 @@ export default function BillingPage() {
         fetchNextNum(); // prepare next number for next time
       }
       
-      // Generate and download PDF
-      toast.loading('Generating PDF...', { id: 'pdf' });
-      await generatePDF();
-      toast.success('Downloaded!', { id: 'pdf' });
+      // Trigger browser print
+      setTimeout(() => {
+        window.print();
+      }, 500);
       
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to process', { id: 'save' });
@@ -192,10 +168,10 @@ export default function BillingPage() {
               <Clock size={16} /> History
             </button>
             <button 
-              onClick={handleSaveAndDownload}
+              onClick={handleSaveAndPrint}
               className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"
             >
-              <Download size={16} /> Save & Download PDF
+              <Printer size={16} /> Save & Print
             </button>
           </div>
         </div>
@@ -448,6 +424,36 @@ export default function BillingPage() {
         </div>
       </div>
       
+      {/* Global Print Styles */}
+      <style jsx global>{`
+        @media print {
+          html, body, #__next, .min-h-screen, main, .overflow-hidden, .overflow-auto {
+            height: auto !important;
+            min-height: auto !important;
+            overflow: visible !important;
+            display: block !important;
+          }
+          body * {
+            visibility: hidden;
+          }
+          .print\\:block, .print\\:block * {
+            visibility: visible;
+          }
+          .print\\:hidden {
+            display: none !important;
+          }
+          .print\\:block {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+          }
+          @page {
+            size: A4;
+            margin: 0;
+          }
+        }
+      `}</style>
     </div>
   );
 }
