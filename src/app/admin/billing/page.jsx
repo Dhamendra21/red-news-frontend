@@ -4,7 +4,7 @@ import api from '@/services/api';
 import toast from 'react-hot-toast';
 import { Plus, Trash2, Printer, Save, FileText, Download, Clock, ChevronRight } from 'lucide-react';
 import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 
 export default function BillingPage() {
   const [nextInvoiceNumber, setNextInvoiceNumber] = useState('');
@@ -144,7 +144,7 @@ export default function BillingPage() {
       pdf.save(`Invoice_${invoice.invoiceNumber}.pdf`);
     } catch (error) {
       console.error('PDF Generation Error:', error);
-      toast.error('Failed to generate PDF');
+      toast.error('PDF Error: ' + error.message);
     }
   };
 
