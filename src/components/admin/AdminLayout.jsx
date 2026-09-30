@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from "@/store/slice/authSlice";
-import { LayoutDashboard, BarChart3, Newspaper, SquarePen, Inbox, Megaphone, Users, User, LogOut, ChevronLeft, ChevronRight, Link as LinkIcon, FolderTree, Film, Image as ImageIcon, Calendar as CalendarIcon } from 'lucide-react';
+import { LayoutDashboard, BarChart3, Newspaper, SquarePen, Inbox, Megaphone, Users, User, LogOut, ChevronLeft, ChevronRight, Link as LinkIcon, FolderTree, Film, Image as ImageIcon, Calendar as CalendarIcon, FileText } from 'lucide-react';
 
 const NAV_ITEMS = [
   { path: '/admin', label: 'Dashboard', icon: <LayoutDashboard size={20} />, exact: true },
@@ -18,6 +18,7 @@ const NAV_ITEMS = [
   { path: '/admin/web-stories', label: 'Web Stories', icon: <Film size={20} /> },
   { path: '/admin/polls', label: 'Daily Poll', icon: <BarChart3 size={20} /> },
   { path: '/admin/tracker', label: 'Work Tracker', icon: <CalendarIcon size={20} /> },
+  { path: '/admin/billing', label: 'Billing', icon: <FileText size={20} /> },
   { path: '/admin/users', label: 'Users', icon: <Users size={20} />, adminOnly: true },
 ];
 
