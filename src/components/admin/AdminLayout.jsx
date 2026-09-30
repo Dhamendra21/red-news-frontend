@@ -39,8 +39,8 @@ export default function AdminLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      <aside className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-slate-900 text-white transition-all duration-300 flex flex-col flex-shrink-0`}>
+    <div className="min-h-screen bg-gray-100 flex print:bg-white">
+      <aside className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-slate-900 text-white transition-all duration-300 flex flex-col flex-shrink-0 print:hidden`}>
         <div className="p-4 border-b border-slate-800 flex items-center gap-3">
           <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
             <img src="/logo.webp" alt="RED NEWS" className="w-full h-full object-contain " />
@@ -74,8 +74,8 @@ export default function AdminLayout({ children }) {
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-        <header className="bg-white shadow-sm px-6 py-3 flex items-center justify-between flex-shrink-0">
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0 print:overflow-visible">
+        <header className="bg-white shadow-sm px-6 py-3 flex items-center justify-between flex-shrink-0 print:hidden">
           <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-gray-500 hover:text-gray-700 text-xl">{sidebarOpen ? <ChevronLeft size={24} /> : <ChevronRight size={24} />}</button>
           <div className="flex items-center gap-4">
             <Link href="/admin/analytics" className="text-sm text-slate-600 hover:text-slate-900 font-medium flex items-center gap-1"><BarChart3 size={16} /> Analytics</Link>
