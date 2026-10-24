@@ -113,7 +113,11 @@ export default function Header() {
                   <span className=' text-red-600'>RED NEWS </span>
                 <span>BHARAT</span>
                 </div>
-                <div className='text-sm border-t-2 border-red-400  '> 
+                <div className='text-sm italic font-thin  '> 
+                  <span className=''>Paper </span>
+                  <span className=''>Magic </span>
+                </div>
+                <div className='text-sm border-t-2 border-red-400 font-semibold tracking-widest '> 
                   <span className=''>Reality </span>
                   <span className=''>Economics </span>
                   <span className=''>Democracy</span>

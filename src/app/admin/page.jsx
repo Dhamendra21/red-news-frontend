@@ -66,7 +66,7 @@ export default function AdminDashboard() {
         <StatCard label="इस हफ्ते"        value={stats?.weekNews}        icon={<Calendar size={24} strokeWidth={1.5} />} link="/admin/news" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-4 md:gap-6">
         {/* Recent News Table */}
         <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-white">
