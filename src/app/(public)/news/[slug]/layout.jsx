@@ -2,11 +2,13 @@ import { ArticleSchema } from '@/components/seo/ArticleSchema';
 
 export async function generateMetadata({ params }) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://rednewsbharat.live';
-  
+  const resolvedParams = await Promise.resolve(params);
+  const slug = resolvedParams?.slug;
+
   try {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.rednewsbharat.live/api';
     // We use fetch to get memoization in Next.js Server Components
-    const res = await fetch(`${backendUrl}/news/slug/${params.slug}`, { next: { revalidate: 60 } });
+    const res = await fetch(`${backendUrl}/news/slug/${slug}`, { next: { revalidate: 60 } });
     
     if (!res.ok) return {};
     
@@ -61,7 +63,7 @@ export async function generateMetadata({ params }) {
       }
     };
   } catch (error) {
-    console.error("Error generating metadata for", params.slug, error);
+    console.error("Error generating metadata for", slug, error);
     return {};
   }
 }
@@ -69,10 +71,12 @@ export async function generateMetadata({ params }) {
 export default async function NewsArticleLayout({ children, params }) {
   let article = null;
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://rednewsbharat.live';
+  const resolvedParams = await Promise.resolve(params);
+  const slug = resolvedParams?.slug;
   
   try {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-    const res = await fetch(`${backendUrl}/news/slug/${params.slug}`, { next: { revalidate: 60 } });
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.rednewsbharat.live/api';
+    const res = await fetch(`${backendUrl}/news/slug/${slug}`, { next: { revalidate: 60 } });
     if (res.ok) {
       const data = await res.json();
       article = data.news || data.data || data;

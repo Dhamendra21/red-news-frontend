@@ -106,19 +106,19 @@ export default function Header() {
           <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', flex: 1, justifyContent: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <img src="/logo.webp" alt="RED NEWS BHARAT" 
-              className="w-20 h-20 rounded-4xl"
+              className="w-20 h-20 rounded-4xl max-sm:w-15 max-sm:h-15"
                 
                 />
               <div className="">
-                <div className='text-3xl font-bold'>
+                <div className='text-3xl font-bold max-sm:text-xl'>
                   <span className=' text-red-600'>RED NEWS </span>
                 <span>BHARAT</span>
                 </div>
-                <div className='text-sm italic font-thin  '> 
+                <div className='text-sm max-sm:text-[2vw] italic font-thin  '> 
                   <span className=''>Paper </span>
                   <span className=''>Magic </span>
                 </div>
-                <div className='text-sm border-t-2 border-red-400 font-semibold tracking-widest '> 
+                <div className='text-sm border-t-2 max-sm:text-xs border-red-400 font-semibold tracking-widest '> 
                   <span className=''>Reality </span>
                   <span className=''>Economics </span>
                   <span className=''>Democracy</span>
@@ -168,7 +168,7 @@ export default function Header() {
 
         {/* ── Desktop & Mobile Swipeable Nav Bar ── */}
         <nav className="relative w-full overflow-hidden">
-          <div className="flex items-center justify-center gap-1.5 overflow-x-auto scrollbar-none py-2 px-4" style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}>
+          <div className="flex items-center justify-center gap-1.5 overflow-x-auto scrollbar-none py-2 max-sm:py-0 px-4" style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}>
             <Link 
               href="/" 
               className={`rounded-full text-xs font-semibold tracking-wide whitespace-nowrap transition-all duration-150 ${isActive('/') ? 'bg-red-600 text-white shadow-sm shadow-red-500/25 px-4 py-1.5' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-3.5 py-1.5'}`}
