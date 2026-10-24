@@ -327,7 +327,7 @@ export default function AdminNewsForm() {
                 <input
                   type="text"
                   placeholder="समाचार का शीर्षक..."
-                  maxLength={100}
+                  maxLength={350}
                   value={form.title}
                   onChange={e => setForm({ ...form, title: e.target.value })}
                   className="w-full border border-slate-200 rounded-lg px-4 py-3 text-lg outline-none focus:border-red-600 focus:ring-4 focus:ring-red-500/20 transition-all font-medium text-slate-900"
@@ -341,7 +341,7 @@ export default function AdminNewsForm() {
                 </div>
                 <textarea
                   placeholder="समाचार का संक्षिप्त विवरण..."
-                  maxLength={250}
+                  maxLength={500}
                   value={form.summary}
                   onChange={e => setForm({ ...form, summary: e.target.value })}
                   rows={3}
