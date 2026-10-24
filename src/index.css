@@ -134,4 +134,17 @@
     border-radius: 50%;
     animation: spin 0.75s linear infinite;
   }
+
+  /* ── News article content (strips copied background highlights) ── */
+  .news-content-body * {
+    background-color: transparent !important;
+    background: transparent !important;
+  }
+  .news-content-body p,
+  .news-content-body span,
+  .news-content-body div,
+  .news-content-body li {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
 }

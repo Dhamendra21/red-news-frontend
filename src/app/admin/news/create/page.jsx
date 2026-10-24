@@ -177,9 +177,15 @@ export default function AdminNewsForm() {
     if (!form.title || !form.summary || !form.content) {
       return toast.error('शीर्षक, सारांश और सामग्री आवश्यक है');
     }
-    setIsLoading(true);
+    // Clean pasted rich-text styles (remove background highlights, external colors)
+    const cleanedContent = (form.content || '')
+      .replace(/background(-color)?\s*:\s*[^;"]+;?/gi, '')
+      .replace(/color\s*:\s*#[0-9a-f]{3,8};?/gi, '')
+      .replace(/color\s*:\s*rgba?\([^)]+\);?/gi, '');
+
     const payload = {
       ...form,
+      content: cleanedContent,
       status,
       images,
       metaKeywords: form.metaKeywords.split(',').map(k => k.trim()).filter(Boolean),

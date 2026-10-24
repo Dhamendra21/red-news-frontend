@@ -27,11 +27,17 @@ const LANGUAGES = [
 ];
 
 // ── Convert **bold** markdown to <strong> ─────────────────
-// ✅ यह replace करें — bold/italic/heading सब handle करता है
+// ✅ Clean copied rich-text styling (strips background, foreign colors, etc.)
 const formatAIContent = (text) => {
   if (!text) return "";
-  // Already HTML है तो as-is return करें
-  if (/<[a-z][\s\S]*>/i.test(text)) return text;
+  // Already HTML है तो inline background/color clean करें
+  if (/<[a-z][\s\S]*>/i.test(text)) {
+    return text
+      .replace(/background(-color)?\s*:\s*[^;"]+;?/gi, "")
+      .replace(/color\s*:\s*#[0-9a-f]{3,8};?/gi, "")
+      .replace(/color\s*:\s*rgba?\([^)]+\);?/gi, "")
+      .replace(/font-family\s*:\s*[^;"]+;?/gi, "");
+  }
 
   return text
     .replace(/\*\*\*(.*?)\*\*\*/g, "<strong><em>$1</em></strong>")
@@ -753,7 +759,7 @@ export default function NewsDetailPage() {
             {/* Content — AI bold fix */}
             {/* Content */}
             <div
-              className="font-body text-slate-800 text-lg sm:text-xl leading-loose tracking-wide"
+              className="news-content-body font-body text-slate-800 text-lg sm:text-xl leading-loose tracking-wide"
               dangerouslySetInnerHTML={{
                 __html: `<p style="margin-bottom:16px">${formatAIContent(displayContent)}</p>`,
               }}
