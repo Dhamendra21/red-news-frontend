@@ -14,6 +14,7 @@ const FOOTER_CATEGORIES = [
   { id: 'technology',    name: 'टेक' },
   { id: 'entertainment', name: 'मनोरंजन' },
   { id: 'health',        name: 'स्वास्थ्य' },
+  { id: 'other',         name: 'अन्य' },
 ];
 
 const QUICK_LINKS = [

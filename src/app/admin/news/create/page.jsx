@@ -19,6 +19,7 @@ const CATEGORIES = [
   { id: 'business', label: 'व्यापार' },
   { id: 'sports', label: 'खेल' },
   { id: 'crime', label: 'अपराध' },
+  { id: 'other', label: 'अन्य (Other)' },
 ];
 
 export default function AdminNewsForm() {

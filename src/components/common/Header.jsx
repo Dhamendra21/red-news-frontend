@@ -24,6 +24,7 @@ const MORE_CATEGORIES = [
   { id: 'lifestyle',     name: 'जीवनशैली',        path: '/category/lifestyle' },
   { id: 'opinion',       name: 'संपादकीय',        path: '/category/opinion' },
   { id: 'reader-news',   name: 'पाठक समाचार',    path: '/category/reader-news' },
+  { id: 'other',         name: 'अन्य',            path: '/category/other' },
 ];
 
 /* ── Colour tokens (mirrors index.css @theme) ── */

@@ -25,6 +25,7 @@ const CATEGORY_LABELS = {
   lifestyle:     'जीवनशैली',
   opinion:       'राय',
   'reader-news': 'पाठक समाचार',
+  other:         'अन्य',
 };
 
 export default function NewsCard({ news, size = 'normal' }) {

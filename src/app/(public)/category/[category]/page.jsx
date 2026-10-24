@@ -30,6 +30,7 @@ const CAT_NAMES = {
   travel:        'यात्रा',
   food:          'भोजन',
   opinion:       'राय',
+  other:         'अन्य',
 };
 
 export default function CategoryPage() {

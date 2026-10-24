@@ -9,7 +9,7 @@ const CAT_NAMES = {
   national:'राष्ट्रीय', sports:'खेल', science:'विज्ञान',
   international:'अंतर्राष्ट्रीय', local:'स्थानीय', environment:'पर्यावरण',
   politics:'राजनीति', entertainment:'मनोरंजन', technology:'प्रौद्योगिकी',
-  health:'स्वास्थ्य', business:'व्यापार', education:'शिक्षा',
+  health:'स्वास्थ्य', business:'व्यापार', education:'शिक्षा', other:'अन्य',
 };
 
 const StatCard = ({ label, value, icon: Icon, trend, trendLabel, live }) => (
