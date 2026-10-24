@@ -86,7 +86,7 @@ const ShareSection = ({ news }) => {
   const title = news?.title || "";
   
   // Format WhatsApp and social share text: Heading + URL + Short summary / footer
-  const whatsappText = `🔴 *RED NEWS BHARAT* 🔴\n\n📌 *${title}*\n\n👇 *पूरी खबर पढ़ने के लिए नीचे लिंक पर क्लिक करें:*\n🔗 ${url}\n\n📲 *सच्ची और सटीक खबरों के लिए आज ही जुड़ें Red News Bharat से!*`;
+  const whatsappText = `🔴 *RED NEWS BHARAT* 🔴\n\n📌 *${title}*\n\n👇 *पूरी खबर पढ़ने के लिए नीचे लिंक पर क्लिक करें:*\n🔗 ${url}\n\n📲 *सच्ची और सटीक खबरों के लिए आज ही जुड़ें Red News Bharat से!* 9201396145`;
   const generalText = `${title}\n${url}`;
 
   const handleCopy = async () => {
