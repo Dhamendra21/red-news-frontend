@@ -273,16 +273,18 @@ export default function Header() {
               ))}
             </div>
 
-            <div style={{ padding: 16, borderTop: `1px solid ${C.border}` }}>
-              <Link href={token ? '/admin' : '/admin/login'} style={{
-                display: 'block', textAlign: 'center',
-                background: C.red, color: '#fff',
-                padding: '10px', borderRadius: 6,
-                fontWeight: 700, textDecoration: 'none', fontSize: 14,
-              }}>
-                {token ? <span style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}><Settings size={16} /> Admin Panel</span> : <span style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}><User size={16} /> लॉगिन करें</span>}
-              </Link>
-            </div>
+            {token && (
+              <div style={{ padding: 16, borderTop: `1px solid ${C.border}` }}>
+                <Link href="/admin" style={{
+                  display: 'block', textAlign: 'center',
+                  background: C.red, color: '#fff',
+                  padding: '10px', borderRadius: 6,
+                  fontWeight: 700, textDecoration: 'none', fontSize: 14,
+                }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}><Settings size={16} /> Admin Panel</span>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       )}
