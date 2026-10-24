@@ -167,8 +167,8 @@ export default function Header() {
         </div>
 
         {/* ── Desktop & Mobile Swipeable Nav Bar ── */}
-        <nav className="relative w-full overflow-hidden">
-          <div className="flex items-center justify-center gap-1.5 overflow-x-auto scrollbar-none py-2 max-sm:py-0 px-4" style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}>
+        <nav className="relative w-full overflow-x-auto md:overflow-visible scrollbar-none">
+          <div className="flex items-center justify-center gap-1.5 py-2 max-sm:py-0 px-4 min-w-max md:min-w-0" style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}>
             <Link 
               href="/" 
               className={`rounded-full text-xs font-semibold tracking-wide whitespace-nowrap transition-all duration-150 ${isActive('/') ? 'bg-red-600 text-white shadow-sm shadow-red-500/25 px-4 py-1.5' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-3.5 py-1.5'}`}
@@ -200,7 +200,7 @@ export default function Header() {
               </button>
               
               {/* Dropdown Menu */}
-              <div className="absolute top-full right-0 mt-1 opacity-0 invisible group-hover/more:opacity-100 group-hover/more:visible transition-all duration-200 bg-white border border-slate-200 rounded-xl shadow-lg p-2 grid grid-cols-2 gap-1 min-w-[240px] z-50">
+              <div className="absolute top-full right-0 mt-1 opacity-0 invisible group-hover/more:opacity-100 group-hover/more:visible transition-all duration-200 bg-white border border-slate-200 rounded-xl shadow-xl p-2 grid grid-cols-2 gap-1 min-w-[240px] z-[100]">
                 {MORE_CATEGORIES.map(item => (
                   <Link 
                     key={item.id} 
@@ -213,8 +213,8 @@ export default function Header() {
               </div>
             </div>
             
-            {/* Right Fade Mask for scrolling hint */}
-            <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white/95 to-transparent pointer-events-none md:hidden" />
+            {/* Right Fade Mask for scrolling hint on mobile only */}
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white/95 to-transparent pointer-events-none md:hidden" />
           </div>
         </nav>
       </header>
