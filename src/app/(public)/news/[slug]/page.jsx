@@ -27,44 +27,52 @@ const LANGUAGES = [
 ];
 
 // ── Convert **bold** markdown to <strong> ─────────────────
-// ✅ Clean copied rich-text styling (strips background, foreign colors, etc.)
+// ✅ Clean copied rich-text styling and convert any AI markdown (**bold**, *italic*, headings) into real HTML
 const formatAIContent = (text) => {
   if (!text) return "";
-  // Already HTML है तो inline background/color clean करें
-  if (/<[a-z][\s\S]*>/i.test(text)) {
-    return text
-      .replace(/background(-color)?\s*:\s*[^;"]+;?/gi, "")
-      .replace(/color\s*:\s*#[0-9a-f]{3,8};?/gi, "")
-      .replace(/color\s*:\s*rgba?\([^)]+\);?/gi, "")
-      .replace(/font-family\s*:\s*[^;"]+;?/gi, "");
-  }
+  let str = text;
 
-  return text
+  // Clean inline styles from clipboard
+  str = str
+    .replace(/background(-color)?\s*:\s*[^;"]+;?/gi, "")
+    .replace(/color\s*:\s*#[0-9a-f]{3,8};?/gi, "")
+    .replace(/color\s*:\s*rgba?\([^)]+\);?/gi, "")
+    .replace(/font-family\s*:\s*[^;"]+;?/gi, "");
+
+  // Always convert markdown bold and italics (handles ***bold italic***, **bold**, *italic*)
+  str = str
     .replace(/\*\*\*(.*?)\*\*\*/g, "<strong><em>$1</em></strong>")
     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-    .replace(/\*(.*?)\*/g, "<em>$1</em>")
-    .replace(
-      /^### (.+)$/gm,
-      '<h3 style="font-size:18px;font-weight:800;margin:20px 0 8px;color:#1a202c">$1</h3>',
-    )
-    .replace(
-      /^## (.+)$/gm,
-      '<h2 style="font-size:21px;font-weight:800;margin:24px 0 10px;color:#1a202c">$1</h2>',
-    )
-    .replace(
-      /^# (.+)$/gm,
-      '<h1 style="font-size:24px;font-weight:800;margin:28px 0 12px;color:#1a202c">$1</h1>',
-    )
-    .replace(
-      /^[-•] (.+)$/gm,
-      '<li style="margin:5px 0;margin-left:20px">$1</li>',
-    )
-    .replace(
-      /^\d+\. (.+)$/gm,
-      '<li style="margin:5px 0;margin-left:20px">$1</li>',
-    )
-    .replace(/\n\n+/g, '</p><p style="margin:0 0 16px">')
-    .replace(/\n/g, "<br/>");
+    .replace(/(^|[^*])\*(?!\s)([^*]+?)\*(?!\*)/g, "$1<em>$2</em>");
+
+  // If not full HTML structure, convert markdown headings, lists, and line breaks
+  if (!/<[a-z][\s\S]*>/i.test(text)) {
+    str = str
+      .replace(
+        /^### (.+)$/gm,
+        '<h3 style="font-size:18px;font-weight:800;margin:20px 0 8px;color:#1a202c">$1</h3>',
+      )
+      .replace(
+        /^## (.+)$/gm,
+        '<h2 style="font-size:21px;font-weight:800;margin:24px 0 10px;color:#1a202c">$1</h2>',
+      )
+      .replace(
+        /^# (.+)$/gm,
+        '<h1 style="font-size:24px;font-weight:800;margin:28px 0 12px;color:#1a202c">$1</h1>',
+      )
+      .replace(
+        /^[-•]\s+(.+)$/gm,
+        '<li style="margin:5px 0;margin-left:20px">$1</li>',
+      )
+      .replace(
+        /^\d+\.\s+(.+)$/gm,
+        '<li style="margin:5px 0;margin-left:20px">$1</li>',
+      )
+      .replace(/\n\n+/g, '</p><p style="margin:0 0 16px">')
+      .replace(/\n/g, "<br/>");
+  }
+
+  return str;
 };
 
 // ── Share Buttons ─────────────────────────────────────────

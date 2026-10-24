@@ -37,6 +37,40 @@ const CATEGORIES = [
   { id: 'other', label: 'अन्य (Other)' },
 ];
 
+// Markdown (AI output) to HTML converter
+const markdownToHtml = (text) => {
+  if (!text) return '';
+  let str = text;
+
+  // If already full HTML without markdown markers, return cleaned
+  // First convert markdown bold/italic
+  str = str
+    .replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/^### (.*$)/gim, '<h3><strong>$1</strong></h3>')
+    .replace(/^## (.*$)/gim, '<h2><strong>$1</strong></h2>')
+    .replace(/^# (.*$)/gim, '<h1><strong>$1</strong></h1>')
+    .replace(/^[-*•]\s+(.*$)/gim, '<li>$1</li>');
+
+  // Convert newlines to paragraphs / line breaks if not already HTML wrapped
+  if (!/<p>|<div>/i.test(str)) {
+    str = str
+      .split(/\n\n+/)
+      .map(p => {
+        p = p.trim();
+        if (!p) return '';
+        if (p.startsWith('<li>')) return `<ul>${p}</ul>`;
+        if (p.startsWith('<h')) return p;
+        return `<p>${p.replace(/\n/g, '<br/>')}</p>`;
+      })
+      .filter(Boolean)
+      .join('');
+  }
+
+  return str;
+};
+
 export default function AdminNewsForm() {
   const { id } = useParams();
   const router = useRouter();
@@ -131,7 +165,9 @@ export default function AdminNewsForm() {
     setIsAiLoading(true);
     try {
       const { data } = await api.post('/ai/rewrite', { content: form.content });
-      setForm(prev => ({ ...prev, content: data.data }));
+      // Convert markdown **bold** / *italic* / headings to HTML for Quill
+      const formatted = markdownToHtml(data.data);
+      setForm(prev => ({ ...prev, content: formatted }));
       toast.success('AI ने समाचार फिर से लिखा');
     } catch (err) {
       toast.error('AI पुनर्लेखन विफल');
@@ -145,13 +181,21 @@ export default function AdminNewsForm() {
     setIsAiLoading(true);
     try {
       const { data } = await api.post('/ai/fix-grammar', { content: form.content });
-      setForm(prev => ({ ...prev, content: data.data }));
+      const formatted = markdownToHtml(data.data);
+      setForm(prev => ({ ...prev, content: formatted }));
       toast.success('व्याकरण सुधार हो गया');
     } catch (err) {
       toast.error('व्याकरण सुधार विफल');
     } finally {
       setIsAiLoading(false);
     }
+  };
+
+  const handleFormatMarkdown = () => {
+    if (!form.content) return toast.error('पहले सामग्री लिखें');
+    const formatted = markdownToHtml(form.content);
+    setForm(prev => ({ ...prev, content: formatted }));
+    toast.success('बोल्ड और इटैलिक फॉर्मेट लागू हो गया');
   };
 
   const handleGenerateSEO = async () => {
@@ -178,10 +222,13 @@ export default function AdminNewsForm() {
       return toast.error('शीर्षक, सारांश और सामग्री आवश्यक है');
     }
     // Clean pasted rich-text styles (remove background highlights, external colors)
-    const cleanedContent = (form.content || '')
+    let cleanedContent = (form.content || '')
       .replace(/background(-color)?\s*:\s*[^;"]+;?/gi, '')
       .replace(/color\s*:\s*#[0-9a-f]{3,8};?/gi, '')
       .replace(/color\s*:\s*rgba?\([^)]+\);?/gi, '');
+
+    // Ensure any raw markdown **bold** or *italic* from AI / clipboard is converted to real HTML tags
+    cleanedContent = markdownToHtml(cleanedContent);
 
     const payload = {
       ...form,
@@ -353,6 +400,15 @@ export default function AdminNewsForm() {
                         className="bg-white border border-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-lg hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50 transition-colors font-medium flex items-center gap-1.5 shadow-sm"
                       >
                         {isAiLoading ? <Loader className="w-3.5 h-3.5 animate-spin" /> : <Edit2 className="w-3.5 h-3.5 text-emerald-500" />} व्याकरण सुधार
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleFormatMarkdown}
+                        className="bg-white border border-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors font-medium flex items-center gap-1.5 shadow-sm ml-auto"
+                        title="पेस्ट किए गए **बोल्ड** या *इटैलिक* को सही फॉर्मेट में बदलें"
+                      >
+                        <Sparkles className="w-3.5 h-3.5 text-amber-500" /> फॉर्मेट ठीक करें (Auto Format)
                       </button>
                     </div>
 
