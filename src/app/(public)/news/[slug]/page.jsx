@@ -78,15 +78,21 @@ const formatAIContent = (text) => {
 // ── Share Buttons ─────────────────────────────────────────
 const ShareSection = ({ news }) => {
   const [copied, setCopied] = useState(false);
-  const url = typeof window !== 'undefined' ? `${window.location.origin}/news/${news?._id}` : "";
+  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://rednewsbharat.live';
+  // Use slug if available, fallback to _id
+  const articleSlug = news?.slug || news?._id || "";
+  const url = `${siteUrl}/news/${articleSlug}`;
   const title = news?.title || "";
-  const text = `${title}\n${url}`;
+  
+  // Format WhatsApp and social share text: Heading + URL + Short summary / footer
+  const whatsappText = `🔴 *RED NEWS BHARAT* 🔴\n\n📌 *${title}*\n\n👇 *पूरी खबर पढ़ने के लिए नीचे लिंक पर क्लिक करें:*\n🔗 ${url}\n\n📲 *सच्ची और सटीक खबरों के लिए आज ही जुड़ें Red News Bharat से!*`;
+  const generalText = `${title}\n${url}`;
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(whatsappText);
       setCopied(true);
-      toast.success("लिंक कॉपी हो गया!");
+      toast.success("लिंक और खबर कॉपी हो गई!");
       setTimeout(() => setCopied(false), 2500);
     } catch {
       toast.error("कॉपी नहीं हो सका");
@@ -96,7 +102,7 @@ const ShareSection = ({ news }) => {
   const handleNativeShare = async () => {
     if (navigator.share) {
       try {
-        await navigator.share({ title, text: news?.summary || title, url });
+        await navigator.share({ title, text: whatsappText, url });
       } catch {}
     }
   };
@@ -106,7 +112,7 @@ const ShareSection = ({ news }) => {
       name: "WhatsApp",
       color: "#25d366",
       icon: <MessageCircle size={14} />,
-      url: `https://wa.me/?text=${encodeURIComponent(text)}`,
+      url: `https://wa.me/?text=${encodeURIComponent(whatsappText)}`,
     },
     {
       name: "Facebook",

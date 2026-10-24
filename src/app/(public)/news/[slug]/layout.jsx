@@ -16,7 +16,10 @@ export async function generateMetadata({ params }) {
     if (!article || !article.title) return {};
 
     const articleUrl = `${baseUrl}/news/${article.slug || params.slug}`;
-    const firstImage = (article.images && article.images.length > 0) ? article.images[0].url : null;
+    const mainImgObj = (article.images && article.images.length > 0)
+      ? (article.images.find(img => img.isMain) || article.images[0])
+      : null;
+    const firstImage = mainImgObj?.url || null;
     const ogImage = firstImage 
         ? (firstImage.startsWith('http') ? firstImage : `${baseUrl}${firstImage}`)
         : `${baseUrl}/images/og-default.jpg`;
@@ -34,6 +37,7 @@ export async function generateMetadata({ params }) {
         title: article.title,
         description: cleanExcerpt,
         url: articleUrl,
+        siteName: 'RED NEWS BHARAT',
         type: 'article',
         publishedTime: article.createdAt || article.publishedAt || new Date().toISOString(),
         modifiedTime: article.updatedAt || new Date().toISOString(),
@@ -41,9 +45,11 @@ export async function generateMetadata({ params }) {
         images: [
           {
             url: ogImage,
-            width: 1280,
-            height: 720,
+            secureUrl: ogImage,
+            width: 1200,
+            height: 630,
             alt: article.title,
+            type: ogImage.endsWith('.png') ? 'image/png' : 'image/jpeg',
           }
         ],
       },
