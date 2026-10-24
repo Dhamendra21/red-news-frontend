@@ -8,7 +8,10 @@ export async function generateMetadata({ params }) {
   try {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.rednewsbharat.live/api';
     // We use fetch to get memoization in Next.js Server Components
-    const res = await fetch(`${backendUrl}/news/slug/${slug}`, { next: { revalidate: 60 } });
+    let res = await fetch(`${backendUrl}/news/slug/${encodeURIComponent(slug)}`, { next: { revalidate: 60 } });
+    if (!res.ok) {
+      res = await fetch(`${backendUrl}/news/${encodeURIComponent(slug)}`, { next: { revalidate: 60 } });
+    }
     
     if (!res.ok) return {};
     
@@ -17,14 +20,18 @@ export async function generateMetadata({ params }) {
     
     if (!article || !article.title) return {};
 
-    const articleUrl = `${baseUrl}/news/${article.slug || params.slug}`;
+    const articleUrl = `${baseUrl}/news/${article.slug || slug}`;
     const mainImgObj = (article.images && article.images.length > 0)
       ? (article.images.find(img => img.isMain) || article.images[0])
       : null;
-    const firstImage = mainImgObj?.url || null;
-    const ogImage = firstImage 
-        ? (firstImage.startsWith('http') ? firstImage : `${baseUrl}${firstImage}`)
-        : `${baseUrl}/images/og-default.jpg`;
+    const rawImage = mainImgObj?.url || null;
+
+    // WhatsApp crawler rejects images over 300KB. Next.js image optimization delivers high-quality ~100KB JPEG:
+    let ogImage = `${baseUrl}/logo.webp`;
+    if (rawImage) {
+      const fullImgUrl = rawImage.startsWith('http') ? rawImage : `${baseUrl}${rawImage}`;
+      ogImage = `${baseUrl}/_next/image?url=${encodeURIComponent(fullImgUrl)}&w=1200&q=75`;
+    }
         
     const rawExcerpt = article.summary || article.content || '';
     const cleanExcerpt = rawExcerpt.replace(/<[^>]*>?/gm, '').substring(0, 160);
@@ -51,7 +58,7 @@ export async function generateMetadata({ params }) {
             width: 1200,
             height: 630,
             alt: article.title,
-            type: ogImage.endsWith('.png') ? 'image/png' : 'image/jpeg',
+            type: 'image/jpeg',
           }
         ],
       },
@@ -76,7 +83,10 @@ export default async function NewsArticleLayout({ children, params }) {
   
   try {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.rednewsbharat.live/api';
-    const res = await fetch(`${backendUrl}/news/slug/${slug}`, { next: { revalidate: 60 } });
+    let res = await fetch(`${backendUrl}/news/slug/${encodeURIComponent(slug)}`, { next: { revalidate: 60 } });
+    if (!res.ok) {
+      res = await fetch(`${backendUrl}/news/${encodeURIComponent(slug)}`, { next: { revalidate: 60 } });
+    }
     if (res.ok) {
       const data = await res.json();
       article = data.news || data.data || data;

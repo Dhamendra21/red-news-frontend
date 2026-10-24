@@ -79,8 +79,9 @@ const formatAIContent = (text) => {
 const ShareSection = ({ news }) => {
   const [copied, setCopied] = useState(false);
   const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://rednewsbharat.live';
-  // Use slug if available, fallback to _id
-  const articleSlug = news?.slug || news?._id || "";
+  // Ensure the shared URL has no quotes, colons, or dots that break WhatsApp link detection
+  const isSafeSlug = news?.slug && !/['".,:;!?*–—]/.test(news.slug) && news.slug !== '-';
+  const articleSlug = isSafeSlug ? news.slug : (news?._id || news?.slug || "");
   const url = `${siteUrl}/news/${articleSlug}`;
   const title = news?.title || "";
   
