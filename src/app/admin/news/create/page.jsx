@@ -322,7 +322,7 @@ export default function AdminNewsForm() {
               <div className="mb-5">
                 <div className="flex justify-between items-center mb-2">
                   <label className="text-sm font-semibold text-slate-800">शीर्षक *</label>
-                  <span className="text-xs text-slate-400">{form.title.length}/100</span>
+                  <span className="text-xs text-slate-400">{form.title.length}/350</span>
                 </div>
                 <input
                   type="text"
@@ -337,7 +337,7 @@ export default function AdminNewsForm() {
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <label className="text-sm font-semibold text-slate-800">सारांश (Excerpt) *</label>
-                  <span className="text-xs text-slate-400">{form.summary.length}/250</span>
+                  <span className="text-xs text-slate-400">{form.summary.length}/500</span>
                 </div>
                 <textarea
                   placeholder="समाचार का संक्षिप्त विवरण..."
