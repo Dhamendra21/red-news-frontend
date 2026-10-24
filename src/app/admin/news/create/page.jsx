@@ -13,12 +13,27 @@ import {
 } from 'lucide-react';
 
 const CATEGORIES = [
-  { id: 'national', label: 'राष्ट्रीय' },
-  { id: 'state', label: 'राज्य' },
-  { id: 'politics', label: 'राजनीति' },
-  { id: 'business', label: 'व्यापार' },
-  { id: 'sports', label: 'खेल' },
-  { id: 'crime', label: 'अपराध' },
+  { id: 'national', label: 'राष्ट्रीय (National)' },
+  { id: 'state', label: 'राज्य (State / छ.ग.)' },
+  { id: 'local', label: 'स्थानीय / देश (Local)' },
+  { id: 'politics', label: 'राजनीति (Politics)' },
+  { id: 'crime', label: 'अपराध (Crime)' },
+  { id: 'business', label: 'व्यापार (Business)' },
+  { id: 'sports', label: 'खेल (Sports)' },
+  { id: 'entertainment', label: 'मनोरंजन (Entertainment)' },
+  { id: 'technology', label: 'प्रौद्योगिकी / टेक (Technology)' },
+  { id: 'health', label: 'स्वास्थ्य (Health)' },
+  { id: 'education', label: 'शिक्षा (Education)' },
+  { id: 'international', label: 'अंतर्राष्ट्रीय / विदेश (International)' },
+  { id: 'world', label: 'विश्व (World)' },
+  { id: 'science', label: 'विज्ञान (Science)' },
+  { id: 'environment', label: 'पर्यावरण (Environment)' },
+  { id: 'lifestyle', label: 'जीवनशैली (Lifestyle)' },
+  { id: 'travel', label: 'यात्रा (Travel)' },
+  { id: 'food', label: 'भोजन (Food)' },
+  { id: 'opinion', label: 'राय / संपादकीय (Opinion)' },
+  { id: 'reader-news', label: 'पाठक समाचार (Reader News)' },
+  { id: 'trending', label: 'ट्रेंडिंग (Trending)' },
   { id: 'other', label: 'अन्य (Other)' },
 ];
 
