@@ -170,7 +170,9 @@ export default function AdminNewsForm() {
       setForm(prev => ({ ...prev, content: formatted }));
       toast.success('AI ने समाचार फिर से लिखा');
     } catch (err) {
-      toast.error('AI पुनर्लेखन विफल');
+      console.error('[AI Rewrite Error]:', err);
+      const errMsg = err.response?.data?.message || err.message || 'AI पुनर्लेखन विफल';
+      toast.error(errMsg);
     } finally {
       setIsAiLoading(false);
     }
@@ -185,7 +187,9 @@ export default function AdminNewsForm() {
       setForm(prev => ({ ...prev, content: formatted }));
       toast.success('व्याकरण सुधार हो गया');
     } catch (err) {
-      toast.error('व्याकरण सुधार विफल');
+      console.error('[AI Grammar Error]:', err);
+      const errMsg = err.response?.data?.message || err.message || 'व्याकरण सुधार विफल';
+      toast.error(errMsg);
     } finally {
       setIsAiLoading(false);
     }
