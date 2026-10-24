@@ -1,6 +1,5 @@
 "use client";
-// AdminLogin.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from "next/navigation";
 import { login } from "@/store/slice/authSlice";
@@ -9,13 +8,21 @@ export default function AdminLogin() {
   const [form, setForm] = useState({ email: '', password: '' });
   const dispatch = useDispatch();
   const navigate = useRouter();
-  const { isLoading, error } = useSelector(state => state?.auth || {});
+  const { isLoading, error, user, token } = useSelector(state => state?.auth || {});
+
+  // ✅ If already logged in, redirect to dashboard immediately
+  useEffect(() => {
+    if (user && token) {
+      navigate.replace('/admin');
+    }
+  }, [user, token, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const result = await dispatch(login(form));
     if (!result.error) navigate.push('/admin');
   };
+
 
   return (
     <div className="min-h-screen bg-red-50 flex items-center justify-center p-4">
