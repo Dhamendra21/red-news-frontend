@@ -85,8 +85,11 @@ const ShareSection = ({ news }) => {
   const url = `${siteUrl}/news/${articleSlug}`;
   const title = news?.title || "";
   
-  // Format WhatsApp and social share text: Heading + URL + Short summary / footer
-  const whatsappText = `🔴 *RED NEWS BHARAT* 🔴\n\n📌 *${title}*\n\n👇 *पूरी खबर पढ़ने के लिए नीचे लिंक पर क्लिक करें:*\n🔗 ${url}\n\n📲 *सच्ची और सटीक खबरों के लिए आज ही जुड़ें Red News Bharat से!* 9201396145`;
+  const whatsappText = `🔴 *RED NEWS BHARAT* 🔴\n\n📌 *${title}*\n\n👇 *पूरी खबर पढ़ने के लिए नीचे लिंक पर क्लिक करें:*\n🔗 ${url}\n\n📲 *सच्ची और सटीक खबरों के लिए आज ही जुड़ें Red News Bharat से!* 
+  Instagram : https://www.instagram.com/rednewsbharat?cplk=dTIycW1xNnJhbGgz
+  Youtube : https://www.youtube.com/@RedNewsbharatpm
+  Facebook : https://www.facebook.com/rednewsbharat
+  Phone/Whatsapp: 9201396145, 7489544706`;
   const generalText = `${title}\n${url}`;
 
   const handleCopy = async () => {
