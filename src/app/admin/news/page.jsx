@@ -5,15 +5,31 @@ import { useSearchParams } from "next/navigation";
 import api from "@/services/api";
 import toast from 'react-hot-toast';
 import dayjs from 'dayjs';
-import { Newspaper, Flame, Edit, Trash2, Eye, AlertCircle, Image as ImageIcon, PlusCircle, Search } from 'lucide-react';
+import { 
+  Newspaper, 
+  Flame, 
+  Edit, 
+  Trash2, 
+  Eye, 
+  AlertCircle, 
+  Image as ImageIcon, 
+  PlusCircle, 
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight 
+} from 'lucide-react';
 
 function AdminNewsContent() {
   const [news, setNews] = useState([]);
   const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
-  const statusFilter = searchParams.get('status') || '';
+  const statusFilter = searchParams.get('status') || 'all';
   
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -24,17 +40,37 @@ function AdminNewsContent() {
     api.get('/categories').then(({ data }) => setCategories(data.data || [])).catch(() => {});
   }, []);
 
+  useEffect(() => {
+    setPage(1);
+  }, [statusFilter]);
+
   const fetchNews = () => {
     setIsLoading(true);
-    api.get('/news', { params: { page, limit: 20, status: statusFilter || undefined, search: searchTerm || undefined, category: categoryFilter || undefined } })
-      .then(({ data }) => { setNews(data.data); setTotal(data.total); })
+    const params = {
+      page,
+      limit,
+      search: searchTerm.trim() || undefined,
+      category: categoryFilter || undefined,
+    };
+    if (statusFilter && statusFilter !== 'all') {
+      params.status = statusFilter;
+    } else if (statusFilter === 'all') {
+      params.status = 'all';
+    }
+
+    api.get('/news', { params })
+      .then(({ data }) => { 
+        setNews(data.data || []); 
+        setTotal(data.total || 0);
+        setTotalPages(data.pages || 1);
+      })
       .catch(() => toast.error('समाचार लोड नहीं हो सका'))
       .finally(() => setIsLoading(false));
   };
 
   useEffect(() => {
     fetchNews();
-  }, [page, statusFilter, searchTerm, categoryFilter]);
+  }, [page, limit, statusFilter, searchTerm, categoryFilter]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -58,6 +94,19 @@ function AdminNewsContent() {
     } catch { toast.error('अपडेट विफल'); }
   };
 
+  const getPageNumbers = () => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    if (page <= 4) {
+      return [1, 2, 3, 4, 5, '...', totalPages];
+    }
+    if (page >= totalPages - 3) {
+      return [1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+    }
+    return [1, '...', page - 1, page, page + 1, '...', totalPages];
+  };
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
@@ -70,8 +119,11 @@ function AdminNewsContent() {
       </div>
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <div className="flex items-center gap-3">
-          <Link href="/admin/news?status=published" className={`px-4 py-2 rounded-full font-medium text-sm transition-colors ${(!statusFilter || statusFilter === 'published') ? 'bg-red-600 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+        <div className="flex items-center gap-2">
+          <Link href="/admin/news?status=all" className={`px-4 py-2 rounded-full font-medium text-sm transition-colors ${(!statusFilter || statusFilter === 'all') ? 'bg-slate-900 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+            सभी (All)
+          </Link>
+          <Link href="/admin/news?status=published" className={`px-4 py-2 rounded-full font-medium text-sm transition-colors ${statusFilter === 'published' ? 'bg-red-600 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
             प्रकाशित (Published)
           </Link>
           <Link href="/admin/news?status=draft" className={`px-4 py-2 rounded-full font-medium text-sm transition-colors ${statusFilter === 'draft' ? 'bg-amber-500 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
@@ -229,6 +281,131 @@ function AdminNewsContent() {
               <div className="flex flex-col items-center justify-center py-16 text-slate-500 gap-3">
                 <Newspaper size={48} className="opacity-20" />
                 <p>कोई समाचार नहीं मिला</p>
+              </div>
+            )}
+
+            {/* ── Pagination Footer ── */}
+            {!isLoading && total > 0 && (
+              <div className="px-6 py-4 border-t border-slate-200 bg-slate-50/70 flex flex-col md:flex-row items-center justify-between gap-4">
+                {/* Left: Summary and Per Page Selector */}
+                <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600">
+                  <div>
+                    दिखाए जा रहे हैं{' '}
+                    <span className="font-bold text-slate-900">
+                      {Math.min((page - 1) * limit + 1, total)}
+                    </span>{' '}
+                    से{' '}
+                    <span className="font-bold text-slate-900">
+                      {Math.min(page * limit, total)}
+                    </span>{' '}
+                    (कुल <span className="font-bold text-slate-900">{total}</span> समाचार)
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <label htmlFor="limit-select" className="text-slate-500 font-medium">
+                      प्रति पेज:
+                    </label>
+                    <select
+                      id="limit-select"
+                      value={limit}
+                      onChange={(e) => {
+                        setLimit(Number(e.target.value));
+                        setPage(1);
+                      }}
+                      className="bg-white border border-slate-200 rounded-md px-2 py-1 text-xs text-slate-700 outline-none focus:border-red-500 shadow-xs cursor-pointer font-medium"
+                    >
+                      <option value={10}>10</option>
+                      <option value={20}>20</option>
+                      <option value={50}>50</option>
+                      <option value={100}>100</option>
+                      <option value={total > 100 ? total : 500}>सभी देखें ({total})</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Right: Page navigation */}
+                {totalPages > 1 && (
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => {
+                        setPage(1);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      disabled={page === 1}
+                      className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-white hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                      title="पहला पेज (First)"
+                    >
+                      <ChevronsLeft size={16} />
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setPage((prev) => Math.max(1, prev - 1));
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      disabled={page === 1}
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-white hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed text-xs font-medium transition-colors"
+                      title="पिछला पेज (Previous)"
+                    >
+                      <ChevronLeft size={14} />
+                      <span className="hidden sm:inline">पिछला</span>
+                    </button>
+
+                    <div className="flex items-center gap-1 mx-1">
+                      {getPageNumbers().map((p, idx) => {
+                        if (p === '...') {
+                          return (
+                            <span key={`ellipsis-${idx}`} className="px-2 py-1 text-slate-400 text-xs font-bold">
+                              ...
+                            </span>
+                          );
+                        }
+                        const isActive = page === p;
+                        return (
+                          <button
+                            key={p}
+                            onClick={() => {
+                              setPage(p);
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                            className={`min-w-8 h-8 px-2.5 rounded-lg text-xs font-bold transition-all ${
+                              isActive
+                                ? 'bg-red-600 text-white shadow-sm ring-2 ring-red-600/20'
+                                : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                            }`}
+                          >
+                            {p}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setPage((prev) => Math.min(totalPages, prev + 1));
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      disabled={page === totalPages}
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-white hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed text-xs font-medium transition-colors"
+                      title="अगला पेज (Next)"
+                    >
+                      <span className="hidden sm:inline">अगला</span>
+                      <ChevronRight size={14} />
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setPage(totalPages);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      disabled={page === totalPages}
+                      className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-white hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                      title="अंतिम पेज (Last)"
+                    >
+                      <ChevronsRight size={16} />
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
